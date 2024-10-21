@@ -1,9 +1,13 @@
 import cohere #import co:here library for NLP
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+api_key = os.getenv("API_KEY")
 
 class Chatbot: # Define a class for the Chatbot which can manage interactions
     def __init__(self): # constructor method to initialise chatbot instance
-        self.cohere_client = cohere.Client('nV7fFAjXx8A03dyi0Z2o2Swf31e6xUrWeKiHbw9s') # Create co:here client object with API key (self means it is an object)
+        self.cohere_client = cohere.Client(api_key) # Create co:here client object with API key (self means it is an object)
         self.context = [] # conversation history for context
 
     def get_response(self, user_input): # Define a function get a response based on the users input
