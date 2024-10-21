@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Izaan's NLP Chatbot</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        #chat-container {
+            height: 400px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .user_message {text-align: right;}
+        .bot-message {text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Izaan's NLP Chatbot</h1>
+        <div id="chat-container" class="mb-3"></div>
+        <input type="text" id="user-input" class="form-control" placeholder="Message Izaan's NLP Chatbot"/>
+        <button id="send-button" class="btn btn-primary mt-2">Send</button>
+        <button id="reset-button" class="btn btn-danger mt-2">Reset Chat</button>
+    </div>
+
+    <script>
+        document.getElementById('send-button').onclick = async function () { // Function to handle sending messages when the button is clicked
+            const userInput = document.getElementById('user-input').value // assigns the message to a variable
+            document.getElementById('chat-container').innerHTML += `<div class="user-message">${userInput}</div>` // Appends the message to the container as a new div
+            document.getElementById('user-input').value = '' // Clears the input field
+
+            const response = await fetch('/chat', { // Makes an HTTP POST request to the /chat endpoint
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json' // Sets the request content type to JSON
+                },
+                body: JSON.stringify({message: userInput}) // Converts input to JSON and includes in request body
+            });
+            const data = await response.json(); // Parse the JSON response from the server
+            document.getElementById('chat-container').innerHTML += `<div class = "bot-message">${data.response}</div>` // Displays the bot's response
+        }
+
+        document.getElementById('reset-button').onclick = async function () { // Function to handle reset button being pressed
+            const response = await fetch('/reset', { // Makes an HTTP POST Request to the /reset endpoint
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'// Sets the request content type to JSON
+                }
+            });
+            const data = await response.json() // Parse the JSON response from the server
+            document.getElementById('chat-container').innerHTML += `<div class="bot-message">${data.response}</div>` // Displays rest confirmation
+        }
+
+    </script>
+
+</body>
+</html>
