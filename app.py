@@ -1,16 +1,22 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from chatbot import Chatbot # Import the Chatbot class that I made
+from flask_cors import CORS
 
 # Create and instance of the Flask application
 app = Flask(__name__) # Initialise the Flask app instance with the current module name
 chatbot = Chatbot() # Instantiate the Chatbot Object
+CORS(app)
+
+@app.route('/')
+def home():
+    return render_template('index.html') 
 
 # Defining a route to handle chat messages
 @app.route('/chat', methods=['POST']) # Specifies /chat as the endpoint and accepts POST requests
 def chat(): # Function to retrieve the user input from the JSON request body
-    user_input = request.json['message'] # Extracts the 'message' field from the incoming JSON
+    user_input = request.json.get('message') # Extracts the 'message' field from the incoming JSON
     response = chatbot.get_response(user_input) # Calls the get_response method which returns the response
-    return jsonify({'Response': response}) # Returns a JSON response with the chatbot's output
+    return jsonify({'response': response}) # Returns a JSON response with the chatbot's output
 
 # Defining a route to handle context resetting
 @app.route('/reset', methods=['POST']) # Specifies /reset as the endpoint and accepts POST requests

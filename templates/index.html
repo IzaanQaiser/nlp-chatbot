@@ -28,7 +28,7 @@
     <script>
         document.getElementById('send-button').onclick = async function () { // Function to handle sending messages when the button is clicked
             const userInput = document.getElementById('user-input').value // assigns the message to a variable
-            document.getElementById('chat-container').innerHTML += `<div class="user-message">${userInput}</div>` // Appends the message to the container as a new div
+            document.getElementById('chat-container').innerHTML += `<div class="user-message">You: ${userInput}</div>` // Appends the message to the container as a new div
             document.getElementById('user-input').value = '' // Clears the input field
 
             const response = await fetch('/chat', { // Makes an HTTP POST request to the /chat endpoint
@@ -39,7 +39,7 @@
                 body: JSON.stringify({message: userInput}) // Converts input to JSON and includes in request body
             });
             const data = await response.json(); // Parse the JSON response from the server
-            document.getElementById('chat-container').innerHTML += `<div class = "bot-message">${data.response}</div>` // Displays the bot's response
+            document.getElementById('chat-container').innerHTML += `<div class = "bot-message">Bot: ${data.response}</div>` // Displays the bot's response
         }
 
         document.getElementById('reset-button').onclick = async function () { // Function to handle reset button being pressed
