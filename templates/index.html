@@ -1,59 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Izaan's NLP Chatbot</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        #chat-container {
-            height: 400px;
-            overflow-y: scroll;
-            border: 1px solid #ccc;
-            padding: 10px;
+      body {
+            background-color: #3a3a3a; /* Nice neutral gray */
+            height: 100vh;
+            color: white;
+            font-family: 'Poppins', sans-serif; /* Apply the Google font */
         }
-        .user_message {text-align: right;}
-        .bot-message {text-align: left; }
+      #chat-container {
+        height: 400px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        overflow-y: scroll;
+        padding: 10px;
+        background-color: rgba(255, 255, 255, 0.01);
+        border-radius: 20px;
+      }
+      .user_message {
+        text-align: right;
+      }
+      .bot-message {
+        text-align: left;
+      }
+      .form-control {
+        border: none;
+        border-radius: 20px; /* Rounded corners */
+        background-color: rgba(255, 255, 255, 0.01);
+        color: white; /* White text for better visibility */
+        padding: 15px; /* Some padding inside */
+        margin-top: 20px;
+      }
+      .button-container {
+            justify-content: center; /* Center the buttons */
+            display: flex;
+            align-items: center;
+        }
+    
+    h1 {
+        text-align: center;
+        padding-top: 5%;
+        font-size: 2.5rem;
+        font-family: 'Poppins', sans-serif; /* Custom font */
+        color: #f1f1f1;
+        margin-bottom: 30px;
+    }
+
+    #send-button, #reset-button {
+            margin: 10px 10px 10px 10px;
+            background-color: #5a5a5a; /* Matching button color */
+            border-color: #5a5a5a;
+            color: white;
+            font-family: 'Poppins', sans-serif; /* Apply custom font */
+        }
+
+        /* Change button hover colors */
+        #send-button:hover, #reset-button:hover {
+            background-color: #707070; /* Slightly lighter on hover */
+            border-color: #707070;
+        }
+
+        /* Styling chat bubbles */
+        .user-message, .bot-message {
+            border-radius: 20px;
+            padding: 8px;
+            margin-bottom: 10px;
+            max-width: 80%;
+            color: white;
+            max-width: 100%;
+        }
+
+        #user-input:focus {
+    background-color: rgba(211, 211, 211, 0.01); /* Keeps the light translucent gray when selected */
+    border: 1px solid rgba(255, 255, 255, 0.9); /* Same light border */
+    outline: none; /* Remove the default outline on focus */
+    color: white;
+}
+
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1 class="mt-5">Izaan's NLP Chatbot</h1>
-        <div id="chat-container" class="mb-3"></div>
-        <input type="text" id="user-input" class="form-control" placeholder="Message Izaan's NLP Chatbot"/>
+      <h1 class="mt-5">Izaan's NLP Chatbot</h1>
+      <div id="chat-container" class="mb-3"></div>
+      <input
+        type="text"
+        id="user-input"
+        class="form-control"
+        placeholder="Message Izaan's NLP Chatbot"
+      />
+      <div class="button-container">
         <button id="send-button" class="btn btn-primary mt-2">Send</button>
-        <button id="reset-button" class="btn btn-danger mt-2">Reset Chat</button>
+        <button id="reset-button" class="btn btn-danger mt-2">
+          Reset Chat
+        </button>
+      </div>
     </div>
 
     <script>
-        document.getElementById('send-button').onclick = async function () { // Function to handle sending messages when the button is clicked
-            const userInput = document.getElementById('user-input').value // assigns the message to a variable
-            document.getElementById('chat-container').innerHTML += `<div class="user-message">You: ${userInput}</div>` // Appends the message to the container as a new div
-            document.getElementById('user-input').value = '' // Clears the input field
+      
+      document.getElementById('user-input').addEventListener('keypress', async function (e) {
+    if (e.key === 'Enter') { // If the Enter key is pressed
+        const userInput = document.getElementById('user-input').value; // assigns the message to a variable
+        if (userInput.trim() === "") return; // Prevent sending empty messages
+        document.getElementById('chat-container').innerHTML += `<div class="user-message">You: ${userInput}</div>`; // Append user message
+        document.getElementById('user-input').value = ''; // Clear the input field
 
-            const response = await fetch('/chat', { // Makes an HTTP POST request to the /chat endpoint
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json' // Sets the request content type to JSON
-                },
-                body: JSON.stringify({message: userInput}) // Converts input to JSON and includes in request body
-            });
-            const data = await response.json(); // Parse the JSON response from the server
-            document.getElementById('chat-container').innerHTML += `<div class = "bot-message">Bot: ${data.response}</div>` // Displays the bot's response
-        }
+        const response = await fetch('/chat', { // Makes an HTTP POST request to the /chat endpoint
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' // Sets the request content type to JSON
+            },
+            body: JSON.stringify({ message: userInput }) // Converts input to JSON and includes in request body
+        });
+        const data = await response.json(); // Parse the JSON response from the server
+        document.getElementById('chat-container').innerHTML += `<div class="bot-message">Bot: ${data.response}</div>`; // Display bot response
+    }
+});
 
-        document.getElementById('reset-button').onclick = async function () { // Function to handle reset button being pressed
-            const response = await fetch('/reset', { // Makes an HTTP POST Request to the /reset endpoint
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'// Sets the request content type to JSON
-                }
-            });
-            const data = await response.json() // Parse the JSON response from the server
-            document.getElementById('chat-container').innerHTML += `<div class="bot-message">${data.response}</div>` // Displays rest confirmation
-        }
+      
+      document.getElementById("send-button").onclick = async function () {
+        // Function to handle sending messages when the button is clicked
+        const userInput = document.getElementById("user-input").value; // assigns the message to a variable
+        document.getElementById(
+          "chat-container"
+        ).innerHTML += `<div class="user-message">You: ${userInput}</div>`; // Appends the message to the container as a new div
+        document.getElementById("user-input").value = ""; // Clears the input field
 
+        const response = await fetch("/chat", {
+          // Makes an HTTP POST request to the /chat endpoint
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Sets the request content type to JSON
+          },
+          body: JSON.stringify({ message: userInput }), // Converts input to JSON and includes in request body
+        });
+        const data = await response.json(); // Parse the JSON response from the server
+        document.getElementById(
+          "chat-container"
+        ).innerHTML += `<div class = "bot-message">Bot: ${data.response}</div>`; // Displays the bot's response
+      };
+
+      document.getElementById("reset-button").onclick = async function () {
+        // Function to handle reset button being pressed
+        const response = await fetch("/reset", {
+          // Makes an HTTP POST Request to the /reset endpoint
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Sets the request content type to JSON
+          },
+        });
+        const data = await response.json(); // Parse the JSON response from the server
+        document.getElementById("chat-container").innerHTML = ''; // Displays rest confirmation
+      };
     </script>
-
-</body>
+  </body>
 </html>
